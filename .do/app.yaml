@@ -1,3 +1,8 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+- rule: DEPLOYMENT_LIVE
+- rule: DOMAIN_LIVE
 databases:
 - cluster_name: web-scheduler-prod
   engine: MYSQL
@@ -15,7 +20,21 @@ domains:
 name: web-scheduler
 region: nyc
 services:
+
  - name: web-scheduler-server
+   alerts:
+    - operator: GREATER_THAN
+      rule: CPU_UTILIZATION
+      value: 80
+      window: FIVE_MINUTES
+    - operator: GREATER_THAN
+      rule: MEM_UTILIZATION
+      value: 80
+      window: FIVE_MINUTES
+    - operator: GREATER_THAN
+      rule: RESTART_COUNT
+      value: 1
+      window: FIVE_MINUTES
    envs:
       - key: ASPNETCORE_ENVIRONMENT
         scope: RUN_AND_BUILD_TIME
@@ -45,7 +64,21 @@ services:
    - 80
    routes:
      - path: /OrleansDashboard
+       preserve_path_prefix: true
  - name: web-scheduler-api
+   alerts:
+    - operator: GREATER_THAN
+      rule: CPU_UTILIZATION
+      value: 80
+      window: FIVE_MINUTES
+    - operator: GREATER_THAN
+      rule: MEM_UTILIZATION
+      value: 80
+      window: FIVE_MINUTES
+    - operator: GREATER_THAN
+      rule: RESTART_COUNT
+      value: 1
+      window: FIVE_MINUTES
    envs:
    - key: Redis__ConnectionString
      scope: RUN_TIME
@@ -86,3 +119,5 @@ static_sites:
   name: web-scheduler-frontend
   routes:
   - path: /
+    preserve_path_prefix: true
+
